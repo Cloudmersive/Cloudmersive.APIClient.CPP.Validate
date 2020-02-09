@@ -26,6 +26,8 @@
 #include "GetTimezonesResponse.h"
 #include "ParseAddressRequest.h"
 #include "ParseAddressResponse.h"
+#include "ValidateAddressRequest.h"
+#include "ValidateAddressResponse.h"
 #include "ValidateCountryRequest.h"
 #include "ValidateCountryResponse.h"
 
@@ -72,6 +74,16 @@ public:
     /// <param name="input">Input parse request</param>
     pplx::task<std::shared_ptr<ParseAddressResponse>> addressParseString(
         std::shared_ptr<ParseAddressRequest> input
+    );
+    /// <summary>
+    /// Validate a street address
+    /// </summary>
+    /// <remarks>
+    /// Determines if an input structured street address is valid or invalid.  If the address is valid, also returns the latitude and longitude of the address.
+    /// </remarks>
+    /// <param name="input">Input parse request</param>
+    pplx::task<std::shared_ptr<ValidateAddressResponse>> addressValidateAddress(
+        std::shared_ptr<ValidateAddressRequest> input
     );
 
 protected:
