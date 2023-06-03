@@ -22,14 +22,24 @@
 
 #include "../ApiClient.h"
 
+#include "CountryListResult.h"
 #include "GetTimezonesRequest.h"
 #include "GetTimezonesResponse.h"
+#include "NormalizeAddressResponse.h"
 #include "ParseAddressRequest.h"
 #include "ParseAddressResponse.h"
+#include "ReverseGeocodeAddressRequest.h"
+#include "ReverseGeocodeAddressResponse.h"
 #include "ValidateAddressRequest.h"
 #include "ValidateAddressResponse.h"
+#include "ValidateCityRequest.h"
+#include "ValidateCityResponse.h"
 #include "ValidateCountryRequest.h"
 #include "ValidateCountryResponse.h"
+#include "ValidatePostalCodeRequest.h"
+#include "ValidatePostalCodeResponse.h"
+#include "ValidateStateRequest.h"
+#include "ValidateStateResponse.h"
 
 #include <boost/optional.hpp>
 
@@ -46,13 +56,61 @@ public:
     AddressApi( std::shared_ptr<ApiClient> apiClient );
     virtual ~AddressApi();
     /// <summary>
+    /// Check if a country is a member of the European Union (EU)
+    /// </summary>
+    /// <remarks>
+    /// Checks if the input country is a member of the European Union or not.
+    /// </remarks>
+    /// <param name="input">Input request</param>
+    pplx::task<std::shared_ptr<ValidateCountryResponse>> addressCheckEUMembership(
+        std::shared_ptr<ValidateCountryRequest> input
+    );
+    /// <summary>
     /// Validate and normalize country information, return ISO 3166-1 country codes and country name
     /// </summary>
     /// <remarks>
-    /// Validates and normalizes country information, and returns key information about a country.  Also returns distinct time zones in the country.
+    /// Validates and normalizes country information, and returns key information about a country, as well as whether it is a member of the European Union.  Also returns distinct time zones in the country.
     /// </remarks>
     /// <param name="input">Input request</param>
     pplx::task<std::shared_ptr<ValidateCountryResponse>> addressCountry(
+        std::shared_ptr<ValidateCountryRequest> input
+    );
+    /// <summary>
+    /// Get a list of ISO 3166-1 countries
+    /// </summary>
+    /// <remarks>
+    /// Enumerates the list of ISO 3166-1 countries, including name, country codes, and more.
+    /// </remarks>
+    pplx::task<std::shared_ptr<CountryListResult>> addressCountryList(
+    );
+    /// <summary>
+    /// Geocode a street address into latitude and longitude
+    /// </summary>
+    /// <remarks>
+    /// Geocodes a street address into latitude and longitude.
+    /// </remarks>
+    /// <param name="input">Input parse request</param>
+    pplx::task<std::shared_ptr<ValidateAddressResponse>> addressGeocode(
+        std::shared_ptr<ValidateAddressRequest> input
+    );
+    /// <summary>
+    /// Get the currency of the input country
+    /// </summary>
+    /// <remarks>
+    /// Gets the currency information for the input country, including the ISO three-letter country code, currency symbol, and English currency name.
+    /// </remarks>
+    /// <param name="input">Input request</param>
+    pplx::task<std::shared_ptr<ValidateCountryResponse>> addressGetCountryCurrency(
+        std::shared_ptr<ValidateCountryRequest> input
+    );
+    /// <summary>
+    /// Get the region, subregion and continent of the country
+    /// </summary>
+    /// <remarks>
+    /// Gets the continent information including region and subregion for the input country.
+    /// </remarks>
+    /// <param name="input">Input request</param>
+    pplx::task<std::shared_ptr<ValidateCountryResponse>> addressGetCountryRegion(
         std::shared_ptr<ValidateCountryRequest> input
     );
     /// <summary>
@@ -66,6 +124,16 @@ public:
         std::shared_ptr<GetTimezonesRequest> input
     );
     /// <summary>
+    /// Normalize a street address
+    /// </summary>
+    /// <remarks>
+    /// Normalizes an input structured street address is valid or invalid.  If the address is valid, also returns the latitude and longitude of the address.  Supports all major international addresses.
+    /// </remarks>
+    /// <param name="input">Input parse request</param>
+    pplx::task<std::shared_ptr<NormalizeAddressResponse>> addressNormalizeAddress(
+        std::shared_ptr<ValidateAddressRequest> input
+    );
+    /// <summary>
     /// Parse an unstructured input text string into an international, formatted address
     /// </summary>
     /// <remarks>
@@ -76,14 +144,54 @@ public:
         std::shared_ptr<ParseAddressRequest> input
     );
     /// <summary>
+    /// Reverse geocode a lattitude and longitude into an address
+    /// </summary>
+    /// <remarks>
+    /// Converts lattitude and longitude coordinates into an address through reverse-geocoding.
+    /// </remarks>
+    /// <param name="input">Input reverse geocoding request</param>
+    pplx::task<std::shared_ptr<ReverseGeocodeAddressResponse>> addressReverseGeocodeAddress(
+        std::shared_ptr<ReverseGeocodeAddressRequest> input
+    );
+    /// <summary>
     /// Validate a street address
     /// </summary>
     /// <remarks>
-    /// Determines if an input structured street address is valid or invalid.  If the address is valid, also returns the latitude and longitude of the address.
+    /// Determines if an input structured street address is valid or invalid.  If the address is valid, also returns the latitude and longitude of the address.  Supports all major international addresses.
     /// </remarks>
     /// <param name="input">Input parse request</param>
     pplx::task<std::shared_ptr<ValidateAddressResponse>> addressValidateAddress(
         std::shared_ptr<ValidateAddressRequest> input
+    );
+    /// <summary>
+    /// Validate a City and State/Province combination, get location information about it
+    /// </summary>
+    /// <remarks>
+    /// Checks if the input city and state name or code is valid, and returns information about it such as normalized City name, State name and more.  Supports all major international addresses.
+    /// </remarks>
+    /// <param name="input">Input parse request</param>
+    pplx::task<std::shared_ptr<ValidateCityResponse>> addressValidateCity(
+        std::shared_ptr<ValidateCityRequest> input
+    );
+    /// <summary>
+    /// Validate a postal code, get location information about it
+    /// </summary>
+    /// <remarks>
+    /// Checks if the input postal code is valid, and returns information about it such as City, State and more.  Supports all major countries.
+    /// </remarks>
+    /// <param name="input">Input parse request</param>
+    pplx::task<std::shared_ptr<ValidatePostalCodeResponse>> addressValidatePostalCode(
+        std::shared_ptr<ValidatePostalCodeRequest> input
+    );
+    /// <summary>
+    /// Validate a state or province, name or abbreviation, get location information about it
+    /// </summary>
+    /// <remarks>
+    /// Checks if the input state name or code is valid, and returns information about it such as normalized State name and more.  Supports all major countries.
+    /// </remarks>
+    /// <param name="input">Input parse request</param>
+    pplx::task<std::shared_ptr<ValidateStateResponse>> addressValidateState(
+        std::shared_ptr<ValidateStateRequest> input
     );
 
 protected:

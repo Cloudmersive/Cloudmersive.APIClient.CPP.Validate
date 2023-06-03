@@ -79,7 +79,6 @@ pplx::task<std::shared_ptr<CheckResponse>> DomainApi::domainCheck(utility::strin
     headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
 
     std::unordered_set<utility::string_t> consumeHttpContentTypes;
-    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/javascript") );
     consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
     consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
 
@@ -173,6 +172,436 @@ pplx::task<std::shared_ptr<CheckResponse>> DomainApi::domainCheck(utility::strin
         return result;
     });
 }
+pplx::task<std::shared_ptr<ValidateUrlResponseSyntaxOnly>> DomainApi::domainGetTopLevelDomainFromUrl(std::shared_ptr<ValidateUrlRequestSyntaxOnly> request)
+{
+
+    // verify the required parameter 'request' is set
+    if (request == nullptr)
+    {
+        throw ApiException(400, utility::conversions::to_string_t("Missing required parameter 'request' when calling DomainApi->domainGetTopLevelDomainFromUrl"));
+    }
+
+
+    std::shared_ptr<ApiConfiguration> apiConfiguration( m_ApiClient->getConfiguration() );
+    utility::string_t path = utility::conversions::to_string_t("/validate/domain/url/get-top-level-domain");
+    
+    std::map<utility::string_t, utility::string_t> queryParams;
+    std::map<utility::string_t, utility::string_t> headerParams( apiConfiguration->getDefaultHeaders() );
+    std::map<utility::string_t, utility::string_t> formParams;
+    std::map<utility::string_t, std::shared_ptr<HttpContent>> fileParams;
+
+    std::unordered_set<utility::string_t> responseHttpContentTypes;
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/xml") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/xml") );
+
+    utility::string_t responseHttpContentType;
+
+    // use JSON if possible
+    if ( responseHttpContentTypes.size() == 0 )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // JSON
+    else if ( responseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( responseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else
+    {
+        throw ApiException(400, utility::conversions::to_string_t("DomainApi->domainGetTopLevelDomainFromUrl does not produce any supported media type"));
+    }
+
+    headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
+
+    std::unordered_set<utility::string_t> consumeHttpContentTypes;
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+
+
+    std::shared_ptr<IHttpBody> httpBody;
+    utility::string_t requestHttpContentType;
+
+    // use JSON if possible
+    if ( consumeHttpContentTypes.size() == 0 || consumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("application/json");
+        web::json::value json;
+
+        json = ModelBase::toJson(request);
+        
+
+        httpBody = std::shared_ptr<IHttpBody>( new JsonBody( json ) );
+    }
+    // multipart formdata
+    else if( consumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+        std::shared_ptr<MultipartFormData> multipart(new MultipartFormData);
+
+        if(request.get())
+        {
+            request->toMultipart(multipart, utility::conversions::to_string_t("request"));
+        }
+
+        httpBody = multipart;
+        requestHttpContentType += utility::conversions::to_string_t("; boundary=") + multipart->getBoundary();
+    }
+    else
+    {
+        throw ApiException(415, utility::conversions::to_string_t("DomainApi->domainGetTopLevelDomainFromUrl does not consume any supported media type"));
+    }
+
+    // authentication (Apikey) required
+    {
+        utility::string_t apiKey = apiConfiguration->getApiKey(utility::conversions::to_string_t("Apikey"));
+        if ( apiKey.size() > 0 )
+        {
+            headerParams[utility::conversions::to_string_t("Apikey")] = apiKey;
+        }
+    }
+
+    return m_ApiClient->callApi(path, utility::conversions::to_string_t("POST"), queryParams, httpBody, headerParams, formParams, fileParams, requestHttpContentType)
+    .then([=](web::http::http_response response)
+    {
+        // 1xx - informational : OK
+        // 2xx - successful       : OK
+        // 3xx - redirection   : OK
+        // 4xx - client error  : not OK
+        // 5xx - client error  : not OK
+        if (response.status_code() >= 400)
+        {
+            throw ApiException(response.status_code()
+                , utility::conversions::to_string_t("error calling domainGetTopLevelDomainFromUrl: ") + response.reason_phrase()
+                , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+        }
+
+        // check response content type
+        if(response.headers().has(utility::conversions::to_string_t("Content-Type")))
+        {
+            utility::string_t contentType = response.headers()[utility::conversions::to_string_t("Content-Type")];
+            if( contentType.find(responseHttpContentType) == std::string::npos )
+            {
+                throw ApiException(500
+                    , utility::conversions::to_string_t("error calling domainGetTopLevelDomainFromUrl: unexpected response type: ") + contentType
+                    , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+            }
+        }
+
+        return response.extract_string();
+    })
+    .then([=](utility::string_t response)
+    {
+        std::shared_ptr<ValidateUrlResponseSyntaxOnly> result(new ValidateUrlResponseSyntaxOnly());
+
+        if(responseHttpContentType == utility::conversions::to_string_t("application/json"))
+        {
+            web::json::value json = web::json::value::parse(response);
+
+            result->fromJson(json);
+        }
+        // else if(responseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
+        // {
+        // TODO multipart response parsing
+        // }
+        else
+        {
+            throw ApiException(500
+                , utility::conversions::to_string_t("error calling domainGetTopLevelDomainFromUrl: unsupported response type"));
+        }
+
+        return result;
+    });
+}
+pplx::task<std::shared_ptr<IsAdminPathResponse>> DomainApi::domainIsAdminPath(utility::string_t value)
+{
+
+
+    std::shared_ptr<ApiConfiguration> apiConfiguration( m_ApiClient->getConfiguration() );
+    utility::string_t path = utility::conversions::to_string_t("/validate/domain/url/is-admin-path");
+    
+    std::map<utility::string_t, utility::string_t> queryParams;
+    std::map<utility::string_t, utility::string_t> headerParams( apiConfiguration->getDefaultHeaders() );
+    std::map<utility::string_t, utility::string_t> formParams;
+    std::map<utility::string_t, std::shared_ptr<HttpContent>> fileParams;
+
+    std::unordered_set<utility::string_t> responseHttpContentTypes;
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/xml") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/xml") );
+
+    utility::string_t responseHttpContentType;
+
+    // use JSON if possible
+    if ( responseHttpContentTypes.size() == 0 )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // JSON
+    else if ( responseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( responseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else
+    {
+        throw ApiException(400, utility::conversions::to_string_t("DomainApi->domainIsAdminPath does not produce any supported media type"));
+    }
+
+    headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
+
+    std::unordered_set<utility::string_t> consumeHttpContentTypes;
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+
+
+    std::shared_ptr<IHttpBody> httpBody;
+    utility::string_t requestHttpContentType;
+
+    // use JSON if possible
+    if ( consumeHttpContentTypes.size() == 0 || consumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("application/json");
+        web::json::value json;
+
+        json = ModelBase::toJson(value);
+
+        httpBody = std::shared_ptr<IHttpBody>( new JsonBody( json ) );
+    }
+    // multipart formdata
+    else if( consumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+        std::shared_ptr<MultipartFormData> multipart(new MultipartFormData);
+        multipart->add(ModelBase::toHttpContent("value", value));
+
+        httpBody = multipart;
+        requestHttpContentType += utility::conversions::to_string_t("; boundary=") + multipart->getBoundary();
+    }
+    else
+    {
+        throw ApiException(415, utility::conversions::to_string_t("DomainApi->domainIsAdminPath does not consume any supported media type"));
+    }
+
+    // authentication (Apikey) required
+    {
+        utility::string_t apiKey = apiConfiguration->getApiKey(utility::conversions::to_string_t("Apikey"));
+        if ( apiKey.size() > 0 )
+        {
+            headerParams[utility::conversions::to_string_t("Apikey")] = apiKey;
+        }
+    }
+
+    return m_ApiClient->callApi(path, utility::conversions::to_string_t("POST"), queryParams, httpBody, headerParams, formParams, fileParams, requestHttpContentType)
+    .then([=](web::http::http_response response)
+    {
+        // 1xx - informational : OK
+        // 2xx - successful       : OK
+        // 3xx - redirection   : OK
+        // 4xx - client error  : not OK
+        // 5xx - client error  : not OK
+        if (response.status_code() >= 400)
+        {
+            throw ApiException(response.status_code()
+                , utility::conversions::to_string_t("error calling domainIsAdminPath: ") + response.reason_phrase()
+                , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+        }
+
+        // check response content type
+        if(response.headers().has(utility::conversions::to_string_t("Content-Type")))
+        {
+            utility::string_t contentType = response.headers()[utility::conversions::to_string_t("Content-Type")];
+            if( contentType.find(responseHttpContentType) == std::string::npos )
+            {
+                throw ApiException(500
+                    , utility::conversions::to_string_t("error calling domainIsAdminPath: unexpected response type: ") + contentType
+                    , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+            }
+        }
+
+        return response.extract_string();
+    })
+    .then([=](utility::string_t response)
+    {
+        std::shared_ptr<IsAdminPathResponse> result(new IsAdminPathResponse());
+
+        if(responseHttpContentType == utility::conversions::to_string_t("application/json"))
+        {
+            web::json::value json = web::json::value::parse(response);
+
+            result->fromJson(json);
+        }
+        // else if(responseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
+        // {
+        // TODO multipart response parsing
+        // }
+        else
+        {
+            throw ApiException(500
+                , utility::conversions::to_string_t("error calling domainIsAdminPath: unsupported response type"));
+        }
+
+        return result;
+    });
+}
+pplx::task<std::shared_ptr<PhishingCheckResponse>> DomainApi::domainPhishingCheck(std::shared_ptr<PhishingCheckRequest> request)
+{
+
+    // verify the required parameter 'request' is set
+    if (request == nullptr)
+    {
+        throw ApiException(400, utility::conversions::to_string_t("Missing required parameter 'request' when calling DomainApi->domainPhishingCheck"));
+    }
+
+
+    std::shared_ptr<ApiConfiguration> apiConfiguration( m_ApiClient->getConfiguration() );
+    utility::string_t path = utility::conversions::to_string_t("/validate/domain/url/phishing-threat-check");
+    
+    std::map<utility::string_t, utility::string_t> queryParams;
+    std::map<utility::string_t, utility::string_t> headerParams( apiConfiguration->getDefaultHeaders() );
+    std::map<utility::string_t, utility::string_t> formParams;
+    std::map<utility::string_t, std::shared_ptr<HttpContent>> fileParams;
+
+    std::unordered_set<utility::string_t> responseHttpContentTypes;
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/xml") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/xml") );
+
+    utility::string_t responseHttpContentType;
+
+    // use JSON if possible
+    if ( responseHttpContentTypes.size() == 0 )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // JSON
+    else if ( responseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( responseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else
+    {
+        throw ApiException(400, utility::conversions::to_string_t("DomainApi->domainPhishingCheck does not produce any supported media type"));
+    }
+
+    headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
+
+    std::unordered_set<utility::string_t> consumeHttpContentTypes;
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+
+
+    std::shared_ptr<IHttpBody> httpBody;
+    utility::string_t requestHttpContentType;
+
+    // use JSON if possible
+    if ( consumeHttpContentTypes.size() == 0 || consumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("application/json");
+        web::json::value json;
+
+        json = ModelBase::toJson(request);
+        
+
+        httpBody = std::shared_ptr<IHttpBody>( new JsonBody( json ) );
+    }
+    // multipart formdata
+    else if( consumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+        std::shared_ptr<MultipartFormData> multipart(new MultipartFormData);
+
+        if(request.get())
+        {
+            request->toMultipart(multipart, utility::conversions::to_string_t("request"));
+        }
+
+        httpBody = multipart;
+        requestHttpContentType += utility::conversions::to_string_t("; boundary=") + multipart->getBoundary();
+    }
+    else
+    {
+        throw ApiException(415, utility::conversions::to_string_t("DomainApi->domainPhishingCheck does not consume any supported media type"));
+    }
+
+    // authentication (Apikey) required
+    {
+        utility::string_t apiKey = apiConfiguration->getApiKey(utility::conversions::to_string_t("Apikey"));
+        if ( apiKey.size() > 0 )
+        {
+            headerParams[utility::conversions::to_string_t("Apikey")] = apiKey;
+        }
+    }
+
+    return m_ApiClient->callApi(path, utility::conversions::to_string_t("POST"), queryParams, httpBody, headerParams, formParams, fileParams, requestHttpContentType)
+    .then([=](web::http::http_response response)
+    {
+        // 1xx - informational : OK
+        // 2xx - successful       : OK
+        // 3xx - redirection   : OK
+        // 4xx - client error  : not OK
+        // 5xx - client error  : not OK
+        if (response.status_code() >= 400)
+        {
+            throw ApiException(response.status_code()
+                , utility::conversions::to_string_t("error calling domainPhishingCheck: ") + response.reason_phrase()
+                , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+        }
+
+        // check response content type
+        if(response.headers().has(utility::conversions::to_string_t("Content-Type")))
+        {
+            utility::string_t contentType = response.headers()[utility::conversions::to_string_t("Content-Type")];
+            if( contentType.find(responseHttpContentType) == std::string::npos )
+            {
+                throw ApiException(500
+                    , utility::conversions::to_string_t("error calling domainPhishingCheck: unexpected response type: ") + contentType
+                    , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+            }
+        }
+
+        return response.extract_string();
+    })
+    .then([=](utility::string_t response)
+    {
+        std::shared_ptr<PhishingCheckResponse> result(new PhishingCheckResponse());
+
+        if(responseHttpContentType == utility::conversions::to_string_t("application/json"))
+        {
+            web::json::value json = web::json::value::parse(response);
+
+            result->fromJson(json);
+        }
+        // else if(responseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
+        // {
+        // TODO multipart response parsing
+        // }
+        else
+        {
+            throw ApiException(500
+                , utility::conversions::to_string_t("error calling domainPhishingCheck: unsupported response type"));
+        }
+
+        return result;
+    });
+}
 pplx::task<std::shared_ptr<WhoisResponse>> DomainApi::domainPost(utility::string_t domain)
 {
 
@@ -216,7 +645,6 @@ pplx::task<std::shared_ptr<WhoisResponse>> DomainApi::domainPost(utility::string
     headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
 
     std::unordered_set<utility::string_t> consumeHttpContentTypes;
-    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/javascript") );
     consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
     consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
 
@@ -305,6 +733,583 @@ pplx::task<std::shared_ptr<WhoisResponse>> DomainApi::domainPost(utility::string
         {
             throw ApiException(500
                 , utility::conversions::to_string_t("error calling domainPost: unsupported response type"));
+        }
+
+        return result;
+    });
+}
+pplx::task<std::shared_ptr<DomainQualityResponse>> DomainApi::domainQualityScore(utility::string_t domain)
+{
+
+
+    std::shared_ptr<ApiConfiguration> apiConfiguration( m_ApiClient->getConfiguration() );
+    utility::string_t path = utility::conversions::to_string_t("/validate/domain/quality-score");
+    
+    std::map<utility::string_t, utility::string_t> queryParams;
+    std::map<utility::string_t, utility::string_t> headerParams( apiConfiguration->getDefaultHeaders() );
+    std::map<utility::string_t, utility::string_t> formParams;
+    std::map<utility::string_t, std::shared_ptr<HttpContent>> fileParams;
+
+    std::unordered_set<utility::string_t> responseHttpContentTypes;
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/xml") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/xml") );
+
+    utility::string_t responseHttpContentType;
+
+    // use JSON if possible
+    if ( responseHttpContentTypes.size() == 0 )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // JSON
+    else if ( responseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( responseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else
+    {
+        throw ApiException(400, utility::conversions::to_string_t("DomainApi->domainQualityScore does not produce any supported media type"));
+    }
+
+    headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
+
+    std::unordered_set<utility::string_t> consumeHttpContentTypes;
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+
+
+    std::shared_ptr<IHttpBody> httpBody;
+    utility::string_t requestHttpContentType;
+
+    // use JSON if possible
+    if ( consumeHttpContentTypes.size() == 0 || consumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("application/json");
+        web::json::value json;
+
+        json = ModelBase::toJson(domain);
+
+        httpBody = std::shared_ptr<IHttpBody>( new JsonBody( json ) );
+    }
+    // multipart formdata
+    else if( consumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+        std::shared_ptr<MultipartFormData> multipart(new MultipartFormData);
+        multipart->add(ModelBase::toHttpContent("domain", domain));
+
+        httpBody = multipart;
+        requestHttpContentType += utility::conversions::to_string_t("; boundary=") + multipart->getBoundary();
+    }
+    else
+    {
+        throw ApiException(415, utility::conversions::to_string_t("DomainApi->domainQualityScore does not consume any supported media type"));
+    }
+
+    // authentication (Apikey) required
+    {
+        utility::string_t apiKey = apiConfiguration->getApiKey(utility::conversions::to_string_t("Apikey"));
+        if ( apiKey.size() > 0 )
+        {
+            headerParams[utility::conversions::to_string_t("Apikey")] = apiKey;
+        }
+    }
+
+    return m_ApiClient->callApi(path, utility::conversions::to_string_t("POST"), queryParams, httpBody, headerParams, formParams, fileParams, requestHttpContentType)
+    .then([=](web::http::http_response response)
+    {
+        // 1xx - informational : OK
+        // 2xx - successful       : OK
+        // 3xx - redirection   : OK
+        // 4xx - client error  : not OK
+        // 5xx - client error  : not OK
+        if (response.status_code() >= 400)
+        {
+            throw ApiException(response.status_code()
+                , utility::conversions::to_string_t("error calling domainQualityScore: ") + response.reason_phrase()
+                , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+        }
+
+        // check response content type
+        if(response.headers().has(utility::conversions::to_string_t("Content-Type")))
+        {
+            utility::string_t contentType = response.headers()[utility::conversions::to_string_t("Content-Type")];
+            if( contentType.find(responseHttpContentType) == std::string::npos )
+            {
+                throw ApiException(500
+                    , utility::conversions::to_string_t("error calling domainQualityScore: unexpected response type: ") + contentType
+                    , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+            }
+        }
+
+        return response.extract_string();
+    })
+    .then([=](utility::string_t response)
+    {
+        std::shared_ptr<DomainQualityResponse> result(new DomainQualityResponse());
+
+        if(responseHttpContentType == utility::conversions::to_string_t("application/json"))
+        {
+            web::json::value json = web::json::value::parse(response);
+
+            result->fromJson(json);
+        }
+        // else if(responseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
+        // {
+        // TODO multipart response parsing
+        // }
+        else
+        {
+            throw ApiException(500
+                , utility::conversions::to_string_t("error calling domainQualityScore: unsupported response type"));
+        }
+
+        return result;
+    });
+}
+pplx::task<std::shared_ptr<UrlSafetyCheckResponseFull>> DomainApi::domainSafetyCheck(std::shared_ptr<UrlSafetyCheckRequestFull> request)
+{
+
+    // verify the required parameter 'request' is set
+    if (request == nullptr)
+    {
+        throw ApiException(400, utility::conversions::to_string_t("Missing required parameter 'request' when calling DomainApi->domainSafetyCheck"));
+    }
+
+
+    std::shared_ptr<ApiConfiguration> apiConfiguration( m_ApiClient->getConfiguration() );
+    utility::string_t path = utility::conversions::to_string_t("/validate/domain/url/safety-threat-check");
+    
+    std::map<utility::string_t, utility::string_t> queryParams;
+    std::map<utility::string_t, utility::string_t> headerParams( apiConfiguration->getDefaultHeaders() );
+    std::map<utility::string_t, utility::string_t> formParams;
+    std::map<utility::string_t, std::shared_ptr<HttpContent>> fileParams;
+
+    std::unordered_set<utility::string_t> responseHttpContentTypes;
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/xml") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/xml") );
+
+    utility::string_t responseHttpContentType;
+
+    // use JSON if possible
+    if ( responseHttpContentTypes.size() == 0 )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // JSON
+    else if ( responseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( responseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else
+    {
+        throw ApiException(400, utility::conversions::to_string_t("DomainApi->domainSafetyCheck does not produce any supported media type"));
+    }
+
+    headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
+
+    std::unordered_set<utility::string_t> consumeHttpContentTypes;
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+
+
+    std::shared_ptr<IHttpBody> httpBody;
+    utility::string_t requestHttpContentType;
+
+    // use JSON if possible
+    if ( consumeHttpContentTypes.size() == 0 || consumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("application/json");
+        web::json::value json;
+
+        json = ModelBase::toJson(request);
+        
+
+        httpBody = std::shared_ptr<IHttpBody>( new JsonBody( json ) );
+    }
+    // multipart formdata
+    else if( consumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+        std::shared_ptr<MultipartFormData> multipart(new MultipartFormData);
+
+        if(request.get())
+        {
+            request->toMultipart(multipart, utility::conversions::to_string_t("request"));
+        }
+
+        httpBody = multipart;
+        requestHttpContentType += utility::conversions::to_string_t("; boundary=") + multipart->getBoundary();
+    }
+    else
+    {
+        throw ApiException(415, utility::conversions::to_string_t("DomainApi->domainSafetyCheck does not consume any supported media type"));
+    }
+
+    // authentication (Apikey) required
+    {
+        utility::string_t apiKey = apiConfiguration->getApiKey(utility::conversions::to_string_t("Apikey"));
+        if ( apiKey.size() > 0 )
+        {
+            headerParams[utility::conversions::to_string_t("Apikey")] = apiKey;
+        }
+    }
+
+    return m_ApiClient->callApi(path, utility::conversions::to_string_t("POST"), queryParams, httpBody, headerParams, formParams, fileParams, requestHttpContentType)
+    .then([=](web::http::http_response response)
+    {
+        // 1xx - informational : OK
+        // 2xx - successful       : OK
+        // 3xx - redirection   : OK
+        // 4xx - client error  : not OK
+        // 5xx - client error  : not OK
+        if (response.status_code() >= 400)
+        {
+            throw ApiException(response.status_code()
+                , utility::conversions::to_string_t("error calling domainSafetyCheck: ") + response.reason_phrase()
+                , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+        }
+
+        // check response content type
+        if(response.headers().has(utility::conversions::to_string_t("Content-Type")))
+        {
+            utility::string_t contentType = response.headers()[utility::conversions::to_string_t("Content-Type")];
+            if( contentType.find(responseHttpContentType) == std::string::npos )
+            {
+                throw ApiException(500
+                    , utility::conversions::to_string_t("error calling domainSafetyCheck: unexpected response type: ") + contentType
+                    , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+            }
+        }
+
+        return response.extract_string();
+    })
+    .then([=](utility::string_t response)
+    {
+        std::shared_ptr<UrlSafetyCheckResponseFull> result(new UrlSafetyCheckResponseFull());
+
+        if(responseHttpContentType == utility::conversions::to_string_t("application/json"))
+        {
+            web::json::value json = web::json::value::parse(response);
+
+            result->fromJson(json);
+        }
+        // else if(responseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
+        // {
+        // TODO multipart response parsing
+        // }
+        else
+        {
+            throw ApiException(500
+                , utility::conversions::to_string_t("error calling domainSafetyCheck: unsupported response type"));
+        }
+
+        return result;
+    });
+}
+pplx::task<std::shared_ptr<UrlSsrfResponseFull>> DomainApi::domainSsrfCheck(std::shared_ptr<UrlSsrfRequestFull> request)
+{
+
+    // verify the required parameter 'request' is set
+    if (request == nullptr)
+    {
+        throw ApiException(400, utility::conversions::to_string_t("Missing required parameter 'request' when calling DomainApi->domainSsrfCheck"));
+    }
+
+
+    std::shared_ptr<ApiConfiguration> apiConfiguration( m_ApiClient->getConfiguration() );
+    utility::string_t path = utility::conversions::to_string_t("/validate/domain/url/ssrf-threat-check");
+    
+    std::map<utility::string_t, utility::string_t> queryParams;
+    std::map<utility::string_t, utility::string_t> headerParams( apiConfiguration->getDefaultHeaders() );
+    std::map<utility::string_t, utility::string_t> formParams;
+    std::map<utility::string_t, std::shared_ptr<HttpContent>> fileParams;
+
+    std::unordered_set<utility::string_t> responseHttpContentTypes;
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/xml") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/xml") );
+
+    utility::string_t responseHttpContentType;
+
+    // use JSON if possible
+    if ( responseHttpContentTypes.size() == 0 )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // JSON
+    else if ( responseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( responseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else
+    {
+        throw ApiException(400, utility::conversions::to_string_t("DomainApi->domainSsrfCheck does not produce any supported media type"));
+    }
+
+    headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
+
+    std::unordered_set<utility::string_t> consumeHttpContentTypes;
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+
+
+    std::shared_ptr<IHttpBody> httpBody;
+    utility::string_t requestHttpContentType;
+
+    // use JSON if possible
+    if ( consumeHttpContentTypes.size() == 0 || consumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("application/json");
+        web::json::value json;
+
+        json = ModelBase::toJson(request);
+        
+
+        httpBody = std::shared_ptr<IHttpBody>( new JsonBody( json ) );
+    }
+    // multipart formdata
+    else if( consumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+        std::shared_ptr<MultipartFormData> multipart(new MultipartFormData);
+
+        if(request.get())
+        {
+            request->toMultipart(multipart, utility::conversions::to_string_t("request"));
+        }
+
+        httpBody = multipart;
+        requestHttpContentType += utility::conversions::to_string_t("; boundary=") + multipart->getBoundary();
+    }
+    else
+    {
+        throw ApiException(415, utility::conversions::to_string_t("DomainApi->domainSsrfCheck does not consume any supported media type"));
+    }
+
+    // authentication (Apikey) required
+    {
+        utility::string_t apiKey = apiConfiguration->getApiKey(utility::conversions::to_string_t("Apikey"));
+        if ( apiKey.size() > 0 )
+        {
+            headerParams[utility::conversions::to_string_t("Apikey")] = apiKey;
+        }
+    }
+
+    return m_ApiClient->callApi(path, utility::conversions::to_string_t("POST"), queryParams, httpBody, headerParams, formParams, fileParams, requestHttpContentType)
+    .then([=](web::http::http_response response)
+    {
+        // 1xx - informational : OK
+        // 2xx - successful       : OK
+        // 3xx - redirection   : OK
+        // 4xx - client error  : not OK
+        // 5xx - client error  : not OK
+        if (response.status_code() >= 400)
+        {
+            throw ApiException(response.status_code()
+                , utility::conversions::to_string_t("error calling domainSsrfCheck: ") + response.reason_phrase()
+                , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+        }
+
+        // check response content type
+        if(response.headers().has(utility::conversions::to_string_t("Content-Type")))
+        {
+            utility::string_t contentType = response.headers()[utility::conversions::to_string_t("Content-Type")];
+            if( contentType.find(responseHttpContentType) == std::string::npos )
+            {
+                throw ApiException(500
+                    , utility::conversions::to_string_t("error calling domainSsrfCheck: unexpected response type: ") + contentType
+                    , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+            }
+        }
+
+        return response.extract_string();
+    })
+    .then([=](utility::string_t response)
+    {
+        std::shared_ptr<UrlSsrfResponseFull> result(new UrlSsrfResponseFull());
+
+        if(responseHttpContentType == utility::conversions::to_string_t("application/json"))
+        {
+            web::json::value json = web::json::value::parse(response);
+
+            result->fromJson(json);
+        }
+        // else if(responseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
+        // {
+        // TODO multipart response parsing
+        // }
+        else
+        {
+            throw ApiException(500
+                , utility::conversions::to_string_t("error calling domainSsrfCheck: unsupported response type"));
+        }
+
+        return result;
+    });
+}
+pplx::task<std::shared_ptr<UrlSsrfResponseBatch>> DomainApi::domainSsrfCheckBatch(std::shared_ptr<UrlSsrfRequestBatch> request)
+{
+
+    // verify the required parameter 'request' is set
+    if (request == nullptr)
+    {
+        throw ApiException(400, utility::conversions::to_string_t("Missing required parameter 'request' when calling DomainApi->domainSsrfCheckBatch"));
+    }
+
+
+    std::shared_ptr<ApiConfiguration> apiConfiguration( m_ApiClient->getConfiguration() );
+    utility::string_t path = utility::conversions::to_string_t("/validate/domain/url/ssrf-threat-check/batch");
+    
+    std::map<utility::string_t, utility::string_t> queryParams;
+    std::map<utility::string_t, utility::string_t> headerParams( apiConfiguration->getDefaultHeaders() );
+    std::map<utility::string_t, utility::string_t> formParams;
+    std::map<utility::string_t, std::shared_ptr<HttpContent>> fileParams;
+
+    std::unordered_set<utility::string_t> responseHttpContentTypes;
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/xml") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/xml") );
+
+    utility::string_t responseHttpContentType;
+
+    // use JSON if possible
+    if ( responseHttpContentTypes.size() == 0 )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // JSON
+    else if ( responseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( responseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else
+    {
+        throw ApiException(400, utility::conversions::to_string_t("DomainApi->domainSsrfCheckBatch does not produce any supported media type"));
+    }
+
+    headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
+
+    std::unordered_set<utility::string_t> consumeHttpContentTypes;
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+
+
+    std::shared_ptr<IHttpBody> httpBody;
+    utility::string_t requestHttpContentType;
+
+    // use JSON if possible
+    if ( consumeHttpContentTypes.size() == 0 || consumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("application/json");
+        web::json::value json;
+
+        json = ModelBase::toJson(request);
+        
+
+        httpBody = std::shared_ptr<IHttpBody>( new JsonBody( json ) );
+    }
+    // multipart formdata
+    else if( consumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+        std::shared_ptr<MultipartFormData> multipart(new MultipartFormData);
+
+        if(request.get())
+        {
+            request->toMultipart(multipart, utility::conversions::to_string_t("request"));
+        }
+
+        httpBody = multipart;
+        requestHttpContentType += utility::conversions::to_string_t("; boundary=") + multipart->getBoundary();
+    }
+    else
+    {
+        throw ApiException(415, utility::conversions::to_string_t("DomainApi->domainSsrfCheckBatch does not consume any supported media type"));
+    }
+
+    // authentication (Apikey) required
+    {
+        utility::string_t apiKey = apiConfiguration->getApiKey(utility::conversions::to_string_t("Apikey"));
+        if ( apiKey.size() > 0 )
+        {
+            headerParams[utility::conversions::to_string_t("Apikey")] = apiKey;
+        }
+    }
+
+    return m_ApiClient->callApi(path, utility::conversions::to_string_t("POST"), queryParams, httpBody, headerParams, formParams, fileParams, requestHttpContentType)
+    .then([=](web::http::http_response response)
+    {
+        // 1xx - informational : OK
+        // 2xx - successful       : OK
+        // 3xx - redirection   : OK
+        // 4xx - client error  : not OK
+        // 5xx - client error  : not OK
+        if (response.status_code() >= 400)
+        {
+            throw ApiException(response.status_code()
+                , utility::conversions::to_string_t("error calling domainSsrfCheckBatch: ") + response.reason_phrase()
+                , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+        }
+
+        // check response content type
+        if(response.headers().has(utility::conversions::to_string_t("Content-Type")))
+        {
+            utility::string_t contentType = response.headers()[utility::conversions::to_string_t("Content-Type")];
+            if( contentType.find(responseHttpContentType) == std::string::npos )
+            {
+                throw ApiException(500
+                    , utility::conversions::to_string_t("error calling domainSsrfCheckBatch: unexpected response type: ") + contentType
+                    , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+            }
+        }
+
+        return response.extract_string();
+    })
+    .then([=](utility::string_t response)
+    {
+        std::shared_ptr<UrlSsrfResponseBatch> result(new UrlSsrfResponseBatch());
+
+        if(responseHttpContentType == utility::conversions::to_string_t("application/json"))
+        {
+            web::json::value json = web::json::value::parse(response);
+
+            result->fromJson(json);
+        }
+        // else if(responseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
+        // {
+        // TODO multipart response parsing
+        // }
+        else
+        {
+            throw ApiException(500
+                , utility::conversions::to_string_t("error calling domainSsrfCheckBatch: unsupported response type"));
         }
 
         return result;
@@ -452,6 +1457,153 @@ pplx::task<std::shared_ptr<ValidateUrlResponseFull>> DomainApi::domainUrlFull(st
         {
             throw ApiException(500
                 , utility::conversions::to_string_t("error calling domainUrlFull: unsupported response type"));
+        }
+
+        return result;
+    });
+}
+pplx::task<std::shared_ptr<UrlHtmlSsrfResponseFull>> DomainApi::domainUrlHtmlSsrfCheck(std::shared_ptr<UrlHtmlSsrfRequestFull> request)
+{
+
+    // verify the required parameter 'request' is set
+    if (request == nullptr)
+    {
+        throw ApiException(400, utility::conversions::to_string_t("Missing required parameter 'request' when calling DomainApi->domainUrlHtmlSsrfCheck"));
+    }
+
+
+    std::shared_ptr<ApiConfiguration> apiConfiguration( m_ApiClient->getConfiguration() );
+    utility::string_t path = utility::conversions::to_string_t("/validate/domain/url/ssrf-threat-check/html-embedded");
+    
+    std::map<utility::string_t, utility::string_t> queryParams;
+    std::map<utility::string_t, utility::string_t> headerParams( apiConfiguration->getDefaultHeaders() );
+    std::map<utility::string_t, utility::string_t> formParams;
+    std::map<utility::string_t, std::shared_ptr<HttpContent>> fileParams;
+
+    std::unordered_set<utility::string_t> responseHttpContentTypes;
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("application/xml") );
+    responseHttpContentTypes.insert( utility::conversions::to_string_t("text/xml") );
+
+    utility::string_t responseHttpContentType;
+
+    // use JSON if possible
+    if ( responseHttpContentTypes.size() == 0 )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // JSON
+    else if ( responseHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("application/json");
+    }
+    // multipart formdata
+    else if( responseHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != responseHttpContentTypes.end() )
+    {
+        responseHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+    }
+    else
+    {
+        throw ApiException(400, utility::conversions::to_string_t("DomainApi->domainUrlHtmlSsrfCheck does not produce any supported media type"));
+    }
+
+    headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
+
+    std::unordered_set<utility::string_t> consumeHttpContentTypes;
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
+    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
+
+
+    std::shared_ptr<IHttpBody> httpBody;
+    utility::string_t requestHttpContentType;
+
+    // use JSON if possible
+    if ( consumeHttpContentTypes.size() == 0 || consumeHttpContentTypes.find(utility::conversions::to_string_t("application/json")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("application/json");
+        web::json::value json;
+
+        json = ModelBase::toJson(request);
+        
+
+        httpBody = std::shared_ptr<IHttpBody>( new JsonBody( json ) );
+    }
+    // multipart formdata
+    else if( consumeHttpContentTypes.find(utility::conversions::to_string_t("multipart/form-data")) != consumeHttpContentTypes.end() )
+    {
+        requestHttpContentType = utility::conversions::to_string_t("multipart/form-data");
+        std::shared_ptr<MultipartFormData> multipart(new MultipartFormData);
+
+        if(request.get())
+        {
+            request->toMultipart(multipart, utility::conversions::to_string_t("request"));
+        }
+
+        httpBody = multipart;
+        requestHttpContentType += utility::conversions::to_string_t("; boundary=") + multipart->getBoundary();
+    }
+    else
+    {
+        throw ApiException(415, utility::conversions::to_string_t("DomainApi->domainUrlHtmlSsrfCheck does not consume any supported media type"));
+    }
+
+    // authentication (Apikey) required
+    {
+        utility::string_t apiKey = apiConfiguration->getApiKey(utility::conversions::to_string_t("Apikey"));
+        if ( apiKey.size() > 0 )
+        {
+            headerParams[utility::conversions::to_string_t("Apikey")] = apiKey;
+        }
+    }
+
+    return m_ApiClient->callApi(path, utility::conversions::to_string_t("POST"), queryParams, httpBody, headerParams, formParams, fileParams, requestHttpContentType)
+    .then([=](web::http::http_response response)
+    {
+        // 1xx - informational : OK
+        // 2xx - successful       : OK
+        // 3xx - redirection   : OK
+        // 4xx - client error  : not OK
+        // 5xx - client error  : not OK
+        if (response.status_code() >= 400)
+        {
+            throw ApiException(response.status_code()
+                , utility::conversions::to_string_t("error calling domainUrlHtmlSsrfCheck: ") + response.reason_phrase()
+                , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+        }
+
+        // check response content type
+        if(response.headers().has(utility::conversions::to_string_t("Content-Type")))
+        {
+            utility::string_t contentType = response.headers()[utility::conversions::to_string_t("Content-Type")];
+            if( contentType.find(responseHttpContentType) == std::string::npos )
+            {
+                throw ApiException(500
+                    , utility::conversions::to_string_t("error calling domainUrlHtmlSsrfCheck: unexpected response type: ") + contentType
+                    , std::make_shared<std::stringstream>(response.extract_utf8string(true).get()));
+            }
+        }
+
+        return response.extract_string();
+    })
+    .then([=](utility::string_t response)
+    {
+        std::shared_ptr<UrlHtmlSsrfResponseFull> result(new UrlHtmlSsrfResponseFull());
+
+        if(responseHttpContentType == utility::conversions::to_string_t("application/json"))
+        {
+            web::json::value json = web::json::value::parse(response);
+
+            result->fromJson(json);
+        }
+        // else if(responseHttpContentType == utility::conversions::to_string_t("multipart/form-data"))
+        // {
+        // TODO multipart response parsing
+        // }
+        else
+        {
+            throw ApiException(500
+                , utility::conversions::to_string_t("error calling domainUrlHtmlSsrfCheck: unsupported response type"));
         }
 
         return result;

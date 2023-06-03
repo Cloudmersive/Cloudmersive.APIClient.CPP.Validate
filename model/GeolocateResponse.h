@@ -13,7 +13,7 @@
 /*
  * GeolocateResponse.h
  *
- * Geolocation result
+ * Geolocation result of performing an IP address geolocation operation.  This product includes GeoLite2 data created by MaxMind, available from www.maxmind.com.
  */
 
 #ifndef IO_SWAGGER_CLIENT_MODEL_GeolocateResponse_H_
@@ -30,7 +30,7 @@ namespace client {
 namespace model {
 
 /// <summary>
-/// Geolocation result
+/// Geolocation result of performing an IP address geolocation operation.  This product includes GeoLite2 data created by MaxMind, available from www.maxmind.com.
 /// </summary>
 class  GeolocateResponse
     : public ModelBase

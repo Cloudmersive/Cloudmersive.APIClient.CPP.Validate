@@ -79,7 +79,6 @@ pplx::task<std::shared_ptr<AddressGetServersResponse>> EmailApi::emailAddressGet
     headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
 
     std::unordered_set<utility::string_t> consumeHttpContentTypes;
-    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/javascript") );
     consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
     consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
 
@@ -216,7 +215,6 @@ pplx::task<std::shared_ptr<FullEmailValidationResponse>> EmailApi::emailFullVali
     headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
 
     std::unordered_set<utility::string_t> consumeHttpContentTypes;
-    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/javascript") );
     consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
     consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
 
@@ -353,7 +351,6 @@ pplx::task<std::shared_ptr<AddressVerifySyntaxOnlyResponse>> EmailApi::emailPost
     headerParams[utility::conversions::to_string_t("Accept")] = responseHttpContentType;
 
     std::unordered_set<utility::string_t> consumeHttpContentTypes;
-    consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/javascript") );
     consumeHttpContentTypes.insert( utility::conversions::to_string_t("application/json") );
     consumeHttpContentTypes.insert( utility::conversions::to_string_t("text/json") );
 

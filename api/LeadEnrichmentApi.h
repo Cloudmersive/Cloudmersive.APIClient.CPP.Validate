@@ -22,6 +22,7 @@
 
 #include "../ApiClient.h"
 
+#include "EmailLead.h"
 #include "LeadEnrichmentRequest.h"
 #include "LeadEnrichmentResponse.h"
 
@@ -48,6 +49,16 @@ public:
     /// <param name="request">Input lead with known fields set, and unknown fields left blank (null)</param>
     pplx::task<std::shared_ptr<LeadEnrichmentResponse>> leadEnrichmentEnrichLead(
         std::shared_ptr<LeadEnrichmentRequest> request
+    );
+    /// <summary>
+    /// Get company information from email address
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// <param name="request">Input email address lead</param>
+    pplx::task<std::shared_ptr<LeadEnrichmentResponse>> leadEnrichmentGetCompanyInformation(
+        std::shared_ptr<EmailLead> request
     );
 
 protected:

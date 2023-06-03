@@ -25,6 +25,8 @@ ValidateUrlResponseSyntaxOnly::ValidateUrlResponseSyntaxOnly()
     m_ValidURLIsSet = false;
     m_WellFormedURL = utility::conversions::to_string_t("");
     m_WellFormedURLIsSet = false;
+    m_TopLevelDomainName = utility::conversions::to_string_t("");
+    m_TopLevelDomainNameIsSet = false;
 }
 
 ValidateUrlResponseSyntaxOnly::~ValidateUrlResponseSyntaxOnly()
@@ -48,6 +50,10 @@ web::json::value ValidateUrlResponseSyntaxOnly::toJson() const
     {
         val[utility::conversions::to_string_t("WellFormedURL")] = ModelBase::toJson(m_WellFormedURL);
     }
+    if(m_TopLevelDomainNameIsSet)
+    {
+        val[utility::conversions::to_string_t("TopLevelDomainName")] = ModelBase::toJson(m_TopLevelDomainName);
+    }
 
     return val;
 }
@@ -70,6 +76,14 @@ void ValidateUrlResponseSyntaxOnly::fromJson(web::json::value& val)
             setWellFormedURL(ModelBase::stringFromJson(fieldValue));
         }
     }
+    if(val.has_field(utility::conversions::to_string_t("TopLevelDomainName")))
+    {
+        web::json::value& fieldValue = val[utility::conversions::to_string_t("TopLevelDomainName")];
+        if(!fieldValue.is_null())
+        {
+            setTopLevelDomainName(ModelBase::stringFromJson(fieldValue));
+        }
+    }
 }
 
 void ValidateUrlResponseSyntaxOnly::toMultipart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix) const
@@ -89,6 +103,11 @@ void ValidateUrlResponseSyntaxOnly::toMultipart(std::shared_ptr<MultipartFormDat
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("WellFormedURL"), m_WellFormedURL));
         
     }
+    if(m_TopLevelDomainNameIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("TopLevelDomainName"), m_TopLevelDomainName));
+        
+    }
 }
 
 void ValidateUrlResponseSyntaxOnly::fromMultiPart(std::shared_ptr<MultipartFormData> multipart, const utility::string_t& prefix)
@@ -106,6 +125,10 @@ void ValidateUrlResponseSyntaxOnly::fromMultiPart(std::shared_ptr<MultipartFormD
     if(multipart->hasContent(utility::conversions::to_string_t("WellFormedURL")))
     {
         setWellFormedURL(ModelBase::stringFromHttpContent(multipart->getContent(utility::conversions::to_string_t("WellFormedURL"))));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("TopLevelDomainName")))
+    {
+        setTopLevelDomainName(ModelBase::stringFromHttpContent(multipart->getContent(utility::conversions::to_string_t("TopLevelDomainName"))));
     }
 }
 
@@ -149,6 +172,27 @@ bool ValidateUrlResponseSyntaxOnly::wellFormedURLIsSet() const
 void ValidateUrlResponseSyntaxOnly::unsetWellFormedURL()
 {
     m_WellFormedURLIsSet = false;
+}
+
+utility::string_t ValidateUrlResponseSyntaxOnly::getTopLevelDomainName() const
+{
+    return m_TopLevelDomainName;
+}
+
+
+void ValidateUrlResponseSyntaxOnly::setTopLevelDomainName(utility::string_t value)
+{
+    m_TopLevelDomainName = value;
+    m_TopLevelDomainNameIsSet = true;
+}
+bool ValidateUrlResponseSyntaxOnly::topLevelDomainNameIsSet() const
+{
+    return m_TopLevelDomainNameIsSet;
+}
+
+void ValidateUrlResponseSyntaxOnly::unsetTopLevelDomainName()
+{
+    m_TopLevelDomainNameIsSet = false;
 }
 
 }

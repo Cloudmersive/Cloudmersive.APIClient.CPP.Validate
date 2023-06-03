@@ -23,6 +23,18 @@
 #include "../ApiClient.h"
 
 #include "CheckResponse.h"
+#include "DomainQualityResponse.h"
+#include "IsAdminPathResponse.h"
+#include "PhishingCheckRequest.h"
+#include "PhishingCheckResponse.h"
+#include "UrlHtmlSsrfRequestFull.h"
+#include "UrlHtmlSsrfResponseFull.h"
+#include "UrlSafetyCheckRequestFull.h"
+#include "UrlSafetyCheckResponseFull.h"
+#include "UrlSsrfRequestBatch.h"
+#include "UrlSsrfRequestFull.h"
+#include "UrlSsrfResponseBatch.h"
+#include "UrlSsrfResponseFull.h"
 #include "ValidateUrlRequestFull.h"
 #include "ValidateUrlRequestSyntaxOnly.h"
 #include "ValidateUrlResponseFull.h"
@@ -55,6 +67,36 @@ public:
         utility::string_t domain
     );
     /// <summary>
+    /// Get top-level domain name from URL
+    /// </summary>
+    /// <remarks>
+    /// Gets the top-level domain name from a URL, such as mydomain.com.
+    /// </remarks>
+    /// <param name="request">Input URL information</param>
+    pplx::task<std::shared_ptr<ValidateUrlResponseSyntaxOnly>> domainGetTopLevelDomainFromUrl(
+        std::shared_ptr<ValidateUrlRequestSyntaxOnly> request
+    );
+    /// <summary>
+    /// Check if path is a high-risk or vulnerable server administration path
+    /// </summary>
+    /// <remarks>
+    /// Check if the input URL or relative path is a server Administration Path, and therefore a risk or vulnerability for remote access.
+    /// </remarks>
+    /// <param name="value">URL or relative path to check, e.g. \&quot;/admin/login\&quot;.  The input is a string so be sure to enclose it in double-quotes.</param>
+    pplx::task<std::shared_ptr<IsAdminPathResponse>> domainIsAdminPath(
+        utility::string_t value
+    );
+    /// <summary>
+    /// Check a URL for Phishing threats
+    /// </summary>
+    /// <remarks>
+    /// Checks if an input URL is at risk of being an Phishing (fake login page, or other page designed to collect information via social engineering) threat or attack.
+    /// </remarks>
+    /// <param name="request">Input URL request</param>
+    pplx::task<std::shared_ptr<PhishingCheckResponse>> domainPhishingCheck(
+        std::shared_ptr<PhishingCheckRequest> request
+    );
+    /// <summary>
     /// Get WHOIS information for a domain
     /// </summary>
     /// <remarks>
@@ -65,6 +107,46 @@ public:
         utility::string_t domain
     );
     /// <summary>
+    /// Validate a domain name&#39;s quality score
+    /// </summary>
+    /// <remarks>
+    /// Check the quality of a domain name.  Supports over 9 million domain names.  Higher quality scores indicate more trust and authority in the domain name, with values ranging from 0.0 (low quality) to 10.0 (maximum quality).
+    /// </remarks>
+    /// <param name="domain">Domain name to check, for example \&quot;cloudmersive.com\&quot;.</param>
+    pplx::task<std::shared_ptr<DomainQualityResponse>> domainQualityScore(
+        utility::string_t domain
+    );
+    /// <summary>
+    /// Check a URL for safety threats
+    /// </summary>
+    /// <remarks>
+    /// Checks if an input URL is at risk of being a safety threat through malware, unwanted software, or social engineering threats.
+    /// </remarks>
+    /// <param name="request">Input URL request</param>
+    pplx::task<std::shared_ptr<UrlSafetyCheckResponseFull>> domainSafetyCheck(
+        std::shared_ptr<UrlSafetyCheckRequestFull> request
+    );
+    /// <summary>
+    /// Check a URL for SSRF threats
+    /// </summary>
+    /// <remarks>
+    /// Checks if an input URL is at risk of being an SSRF (Server-side request forgery) threat or attack.
+    /// </remarks>
+    /// <param name="request">Input URL request</param>
+    pplx::task<std::shared_ptr<UrlSsrfResponseFull>> domainSsrfCheck(
+        std::shared_ptr<UrlSsrfRequestFull> request
+    );
+    /// <summary>
+    /// Check a URL for SSRF threats in batches
+    /// </summary>
+    /// <remarks>
+    /// Batch-checks if input URLs are at risk of being an SSRF (Server-side request forgery) threat or attack.
+    /// </remarks>
+    /// <param name="request">Input URL request as a batch of multiple URLs</param>
+    pplx::task<std::shared_ptr<UrlSsrfResponseBatch>> domainSsrfCheckBatch(
+        std::shared_ptr<UrlSsrfRequestBatch> request
+    );
+    /// <summary>
     /// Validate a URL fully
     /// </summary>
     /// <remarks>
@@ -73,6 +155,16 @@ public:
     /// <param name="request">Input URL request</param>
     pplx::task<std::shared_ptr<ValidateUrlResponseFull>> domainUrlFull(
         std::shared_ptr<ValidateUrlRequestFull> request
+    );
+    /// <summary>
+    /// Check a URL for HTML embedded SSRF threats
+    /// </summary>
+    /// <remarks>
+    /// Checks if an input URL HTML is at risk of containing one or more embedded SSRF (Server-side request forgery) threats or attacks.
+    /// </remarks>
+    /// <param name="request">Input URL request</param>
+    pplx::task<std::shared_ptr<UrlHtmlSsrfResponseFull>> domainUrlHtmlSsrfCheck(
+        std::shared_ptr<UrlHtmlSsrfRequestFull> request
     );
     /// <summary>
     /// Validate a URL syntactically

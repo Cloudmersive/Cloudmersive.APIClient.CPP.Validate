@@ -31,7 +31,19 @@ ValidateCountryResponse::ValidateCountryResponse()
     m_FIPSTwoLetterCodeIsSet = false;
     m_ThreeLetterCode = utility::conversions::to_string_t("");
     m_ThreeLetterCodeIsSet = false;
+    m_IsEuropeanUnionMember = false;
+    m_IsEuropeanUnionMemberIsSet = false;
     m_TimezonesIsSet = false;
+    m_ISOCurrencyCode = utility::conversions::to_string_t("");
+    m_ISOCurrencyCodeIsSet = false;
+    m_CurrencySymbol = utility::conversions::to_string_t("");
+    m_CurrencySymbolIsSet = false;
+    m_CurrencyEnglishName = utility::conversions::to_string_t("");
+    m_CurrencyEnglishNameIsSet = false;
+    m_Region = utility::conversions::to_string_t("");
+    m_RegionIsSet = false;
+    m_Subregion = utility::conversions::to_string_t("");
+    m_SubregionIsSet = false;
 }
 
 ValidateCountryResponse::~ValidateCountryResponse()
@@ -67,6 +79,10 @@ web::json::value ValidateCountryResponse::toJson() const
     {
         val[utility::conversions::to_string_t("ThreeLetterCode")] = ModelBase::toJson(m_ThreeLetterCode);
     }
+    if(m_IsEuropeanUnionMemberIsSet)
+    {
+        val[utility::conversions::to_string_t("IsEuropeanUnionMember")] = ModelBase::toJson(m_IsEuropeanUnionMember);
+    }
     {
         std::vector<web::json::value> jsonArray;
         for( auto& item : m_Timezones )
@@ -77,6 +93,26 @@ web::json::value ValidateCountryResponse::toJson() const
         {
             val[utility::conversions::to_string_t("Timezones")] = web::json::value::array(jsonArray);
         }
+    }
+    if(m_ISOCurrencyCodeIsSet)
+    {
+        val[utility::conversions::to_string_t("ISOCurrencyCode")] = ModelBase::toJson(m_ISOCurrencyCode);
+    }
+    if(m_CurrencySymbolIsSet)
+    {
+        val[utility::conversions::to_string_t("CurrencySymbol")] = ModelBase::toJson(m_CurrencySymbol);
+    }
+    if(m_CurrencyEnglishNameIsSet)
+    {
+        val[utility::conversions::to_string_t("CurrencyEnglishName")] = ModelBase::toJson(m_CurrencyEnglishName);
+    }
+    if(m_RegionIsSet)
+    {
+        val[utility::conversions::to_string_t("Region")] = ModelBase::toJson(m_Region);
+    }
+    if(m_SubregionIsSet)
+    {
+        val[utility::conversions::to_string_t("Subregion")] = ModelBase::toJson(m_Subregion);
     }
 
     return val;
@@ -124,6 +160,14 @@ void ValidateCountryResponse::fromJson(web::json::value& val)
             setThreeLetterCode(ModelBase::stringFromJson(fieldValue));
         }
     }
+    if(val.has_field(utility::conversions::to_string_t("IsEuropeanUnionMember")))
+    {
+        web::json::value& fieldValue = val[utility::conversions::to_string_t("IsEuropeanUnionMember")];
+        if(!fieldValue.is_null())
+        {
+            setIsEuropeanUnionMember(ModelBase::boolFromJson(fieldValue));
+        }
+    }
     {
         m_Timezones.clear();
         std::vector<web::json::value> jsonArray;
@@ -142,6 +186,46 @@ void ValidateCountryResponse::fromJson(web::json::value& val)
                 m_Timezones.push_back( newItem );
             }
         }
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t("ISOCurrencyCode")))
+    {
+        web::json::value& fieldValue = val[utility::conversions::to_string_t("ISOCurrencyCode")];
+        if(!fieldValue.is_null())
+        {
+            setISOCurrencyCode(ModelBase::stringFromJson(fieldValue));
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t("CurrencySymbol")))
+    {
+        web::json::value& fieldValue = val[utility::conversions::to_string_t("CurrencySymbol")];
+        if(!fieldValue.is_null())
+        {
+            setCurrencySymbol(ModelBase::stringFromJson(fieldValue));
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t("CurrencyEnglishName")))
+    {
+        web::json::value& fieldValue = val[utility::conversions::to_string_t("CurrencyEnglishName")];
+        if(!fieldValue.is_null())
+        {
+            setCurrencyEnglishName(ModelBase::stringFromJson(fieldValue));
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t("Region")))
+    {
+        web::json::value& fieldValue = val[utility::conversions::to_string_t("Region")];
+        if(!fieldValue.is_null())
+        {
+            setRegion(ModelBase::stringFromJson(fieldValue));
+        }
+    }
+    if(val.has_field(utility::conversions::to_string_t("Subregion")))
+    {
+        web::json::value& fieldValue = val[utility::conversions::to_string_t("Subregion")];
+        if(!fieldValue.is_null())
+        {
+            setSubregion(ModelBase::stringFromJson(fieldValue));
         }
     }
 }
@@ -178,6 +262,10 @@ void ValidateCountryResponse::toMultipart(std::shared_ptr<MultipartFormData> mul
         multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("ThreeLetterCode"), m_ThreeLetterCode));
         
     }
+    if(m_IsEuropeanUnionMemberIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("IsEuropeanUnionMember"), m_IsEuropeanUnionMember));
+    }
     {
         std::vector<web::json::value> jsonArray;
         for( auto& item : m_Timezones )
@@ -189,6 +277,31 @@ void ValidateCountryResponse::toMultipart(std::shared_ptr<MultipartFormData> mul
         {
             multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("Timezones"), web::json::value::array(jsonArray), utility::conversions::to_string_t("application/json")));
         }
+    }
+    if(m_ISOCurrencyCodeIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("ISOCurrencyCode"), m_ISOCurrencyCode));
+        
+    }
+    if(m_CurrencySymbolIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("CurrencySymbol"), m_CurrencySymbol));
+        
+    }
+    if(m_CurrencyEnglishNameIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("CurrencyEnglishName"), m_CurrencyEnglishName));
+        
+    }
+    if(m_RegionIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("Region"), m_Region));
+        
+    }
+    if(m_SubregionIsSet)
+    {
+        multipart->add(ModelBase::toHttpContent(namePrefix + utility::conversions::to_string_t("Subregion"), m_Subregion));
+        
     }
 }
 
@@ -220,6 +333,10 @@ void ValidateCountryResponse::fromMultiPart(std::shared_ptr<MultipartFormData> m
     {
         setThreeLetterCode(ModelBase::stringFromHttpContent(multipart->getContent(utility::conversions::to_string_t("ThreeLetterCode"))));
     }
+    if(multipart->hasContent(utility::conversions::to_string_t("IsEuropeanUnionMember")))
+    {
+        setIsEuropeanUnionMember(ModelBase::boolFromHttpContent(multipart->getContent(utility::conversions::to_string_t("IsEuropeanUnionMember"))));
+    }
     {
         m_Timezones.clear();
         if(multipart->hasContent(utility::conversions::to_string_t("Timezones")))
@@ -240,6 +357,26 @@ void ValidateCountryResponse::fromMultiPart(std::shared_ptr<MultipartFormData> m
             }
         }
         }
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("ISOCurrencyCode")))
+    {
+        setISOCurrencyCode(ModelBase::stringFromHttpContent(multipart->getContent(utility::conversions::to_string_t("ISOCurrencyCode"))));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("CurrencySymbol")))
+    {
+        setCurrencySymbol(ModelBase::stringFromHttpContent(multipart->getContent(utility::conversions::to_string_t("CurrencySymbol"))));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("CurrencyEnglishName")))
+    {
+        setCurrencyEnglishName(ModelBase::stringFromHttpContent(multipart->getContent(utility::conversions::to_string_t("CurrencyEnglishName"))));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("Region")))
+    {
+        setRegion(ModelBase::stringFromHttpContent(multipart->getContent(utility::conversions::to_string_t("Region"))));
+    }
+    if(multipart->hasContent(utility::conversions::to_string_t("Subregion")))
+    {
+        setSubregion(ModelBase::stringFromHttpContent(multipart->getContent(utility::conversions::to_string_t("Subregion"))));
     }
 }
 
@@ -348,6 +485,27 @@ void ValidateCountryResponse::unsetThreeLetterCode()
     m_ThreeLetterCodeIsSet = false;
 }
 
+bool ValidateCountryResponse::isIsEuropeanUnionMember() const
+{
+    return m_IsEuropeanUnionMember;
+}
+
+
+void ValidateCountryResponse::setIsEuropeanUnionMember(bool value)
+{
+    m_IsEuropeanUnionMember = value;
+    m_IsEuropeanUnionMemberIsSet = true;
+}
+bool ValidateCountryResponse::isEuropeanUnionMemberIsSet() const
+{
+    return m_IsEuropeanUnionMemberIsSet;
+}
+
+void ValidateCountryResponse::unsetIsEuropeanUnionMember()
+{
+    m_IsEuropeanUnionMemberIsSet = false;
+}
+
 std::vector<std::shared_ptr<Timezone>>& ValidateCountryResponse::getTimezones()
 {
     return m_Timezones;
@@ -366,6 +524,111 @@ bool ValidateCountryResponse::timezonesIsSet() const
 void ValidateCountryResponse::unsetTimezones()
 {
     m_TimezonesIsSet = false;
+}
+
+utility::string_t ValidateCountryResponse::getISOCurrencyCode() const
+{
+    return m_ISOCurrencyCode;
+}
+
+
+void ValidateCountryResponse::setISOCurrencyCode(utility::string_t value)
+{
+    m_ISOCurrencyCode = value;
+    m_ISOCurrencyCodeIsSet = true;
+}
+bool ValidateCountryResponse::iSOCurrencyCodeIsSet() const
+{
+    return m_ISOCurrencyCodeIsSet;
+}
+
+void ValidateCountryResponse::unsetISOCurrencyCode()
+{
+    m_ISOCurrencyCodeIsSet = false;
+}
+
+utility::string_t ValidateCountryResponse::getCurrencySymbol() const
+{
+    return m_CurrencySymbol;
+}
+
+
+void ValidateCountryResponse::setCurrencySymbol(utility::string_t value)
+{
+    m_CurrencySymbol = value;
+    m_CurrencySymbolIsSet = true;
+}
+bool ValidateCountryResponse::currencySymbolIsSet() const
+{
+    return m_CurrencySymbolIsSet;
+}
+
+void ValidateCountryResponse::unsetCurrencySymbol()
+{
+    m_CurrencySymbolIsSet = false;
+}
+
+utility::string_t ValidateCountryResponse::getCurrencyEnglishName() const
+{
+    return m_CurrencyEnglishName;
+}
+
+
+void ValidateCountryResponse::setCurrencyEnglishName(utility::string_t value)
+{
+    m_CurrencyEnglishName = value;
+    m_CurrencyEnglishNameIsSet = true;
+}
+bool ValidateCountryResponse::currencyEnglishNameIsSet() const
+{
+    return m_CurrencyEnglishNameIsSet;
+}
+
+void ValidateCountryResponse::unsetCurrencyEnglishName()
+{
+    m_CurrencyEnglishNameIsSet = false;
+}
+
+utility::string_t ValidateCountryResponse::getRegion() const
+{
+    return m_Region;
+}
+
+
+void ValidateCountryResponse::setRegion(utility::string_t value)
+{
+    m_Region = value;
+    m_RegionIsSet = true;
+}
+bool ValidateCountryResponse::regionIsSet() const
+{
+    return m_RegionIsSet;
+}
+
+void ValidateCountryResponse::unsetRegion()
+{
+    m_RegionIsSet = false;
+}
+
+utility::string_t ValidateCountryResponse::getSubregion() const
+{
+    return m_Subregion;
+}
+
+
+void ValidateCountryResponse::setSubregion(utility::string_t value)
+{
+    m_Subregion = value;
+    m_SubregionIsSet = true;
+}
+bool ValidateCountryResponse::subregionIsSet() const
+{
+    return m_SubregionIsSet;
+}
+
+void ValidateCountryResponse::unsetSubregion()
+{
+    m_SubregionIsSet = false;
 }
 
 }

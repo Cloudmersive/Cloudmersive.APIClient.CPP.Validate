@@ -67,12 +67,21 @@ public:
     bool wellFormedURLIsSet() const;
     void unsetWellFormedURL();
     void setWellFormedURL(utility::string_t value);
+    /// <summary>
+    /// The top-level domain name of the URL, e.g. mydomain.com
+    /// </summary>
+    utility::string_t getTopLevelDomainName() const;
+    bool topLevelDomainNameIsSet() const;
+    void unsetTopLevelDomainName();
+    void setTopLevelDomainName(utility::string_t value);
 
 protected:
     bool m_ValidURL;
     bool m_ValidURLIsSet;
     utility::string_t m_WellFormedURL;
     bool m_WellFormedURLIsSet;
+    utility::string_t m_TopLevelDomainName;
+    bool m_TopLevelDomainNameIsSet;
 };
 
 }

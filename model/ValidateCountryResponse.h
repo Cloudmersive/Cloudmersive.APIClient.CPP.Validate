@@ -91,12 +91,54 @@ public:
     void unsetThreeLetterCode();
     void setThreeLetterCode(utility::string_t value);
     /// <summary>
+    /// True if this country is currently a member of the European Union (EU), false otherwise
+    /// </summary>
+    bool isIsEuropeanUnionMember() const;
+    bool isEuropeanUnionMemberIsSet() const;
+    void unsetIsEuropeanUnionMember();
+    void setIsEuropeanUnionMember(bool value);
+    /// <summary>
     /// Time zones (IANA/Olsen) in the country
     /// </summary>
     std::vector<std::shared_ptr<Timezone>>& getTimezones();
     bool timezonesIsSet() const;
     void unsetTimezones();
     void setTimezones(std::vector<std::shared_ptr<Timezone>> value);
+    /// <summary>
+    /// ISO 4217 currency three-letter code associated with the country
+    /// </summary>
+    utility::string_t getISOCurrencyCode() const;
+    bool iSOCurrencyCodeIsSet() const;
+    void unsetISOCurrencyCode();
+    void setISOCurrencyCode(utility::string_t value);
+    /// <summary>
+    /// Symbol associated with the currency
+    /// </summary>
+    utility::string_t getCurrencySymbol() const;
+    bool currencySymbolIsSet() const;
+    void unsetCurrencySymbol();
+    void setCurrencySymbol(utility::string_t value);
+    /// <summary>
+    /// Full name of the currency
+    /// </summary>
+    utility::string_t getCurrencyEnglishName() const;
+    bool currencyEnglishNameIsSet() const;
+    void unsetCurrencyEnglishName();
+    void setCurrencyEnglishName(utility::string_t value);
+    /// <summary>
+    /// Region (continent) in which the country is located; possible values are None, Europe, Americas, Asia, Africa, Oceania
+    /// </summary>
+    utility::string_t getRegion() const;
+    bool regionIsSet() const;
+    void unsetRegion();
+    void setRegion(utility::string_t value);
+    /// <summary>
+    /// Subregion in which the country is located; possible values are None, NorthernEurope, WesternEurope, SouthernEurope, EasternEurope, CentralAmerica, NorthernAmerica, SouthAmerica, EasternAfrica, MiddleAfrica, NorthernAfrica , SouthernAfrica , WesternAfrica , CentralAsia , EasternAsia , SouthernAsia , SouthEasternAsia , WesternAsia , Southern , Middle , AustraliaandNewZealand , Melanesia , Polynesia , Micronesia , Caribbean,
+    /// </summary>
+    utility::string_t getSubregion() const;
+    bool subregionIsSet() const;
+    void unsetSubregion();
+    void setSubregion(utility::string_t value);
 
 protected:
     bool m_Successful;
@@ -109,8 +151,20 @@ protected:
     bool m_FIPSTwoLetterCodeIsSet;
     utility::string_t m_ThreeLetterCode;
     bool m_ThreeLetterCodeIsSet;
+    bool m_IsEuropeanUnionMember;
+    bool m_IsEuropeanUnionMemberIsSet;
     std::vector<std::shared_ptr<Timezone>> m_Timezones;
     bool m_TimezonesIsSet;
+    utility::string_t m_ISOCurrencyCode;
+    bool m_ISOCurrencyCodeIsSet;
+    utility::string_t m_CurrencySymbol;
+    bool m_CurrencySymbolIsSet;
+    utility::string_t m_CurrencyEnglishName;
+    bool m_CurrencyEnglishNameIsSet;
+    utility::string_t m_Region;
+    bool m_RegionIsSet;
+    utility::string_t m_Subregion;
+    bool m_SubregionIsSet;
 };
 
 }
